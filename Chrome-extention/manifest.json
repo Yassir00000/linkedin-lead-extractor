@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "LinkedIn Lead Extension",
+    "version": "5.2",
+    "description": "Professional LinkedIn lead extraction and enrichment tool with AI-powered company analysis and contact management features.",
+    "permissions": [
+        "storage",
+        "scripting", 
+        "downloads",
+        "notifications",
+        "alarms"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://www.linkedin.com/*"],
+            "js": ["content.js"]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icon16.png",
+            "48": "icon48.png",
+            "128": "icon128.png"
+        }
+    },
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    }
+}

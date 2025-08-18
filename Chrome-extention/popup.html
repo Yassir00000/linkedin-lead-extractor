@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrapy</title>
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --primary-hover: #0052a3;
+            --primary-light: #e6f3ff;
+            --danger-color: #dc3545;
+            --danger-hover: #c82333;
+            --danger-light: #f8d7da;
+            --success-color: #28a745;
+            --success-hover: #218838;
+            --success-light: #d4edda;
+            --warning-color: #ffc107;
+
+            --background-color: #f0f2f5; 
+            --card-background: #ffffff;
+            --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            
+            --border-color: #e9ecef;
+            --border-radius: 8px;
+            
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--background-color);
+            width: 400px;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        #popup-content {
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .popup-content-inner {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Header Section */
+        .title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-icon {
+            width: 26px;
+            height: 26px;
+        }
+
+        #settings-btn {
+            background: none; border: none; border-radius: 50%;
+            padding: 6px;
+            cursor: pointer; font-size: 18px;
+            color: var(--text-secondary); transition: var(--transition);
+        }
+
+        #settings-btn:hover { background: #e9e9e9; transform: rotate(90deg); }
+
+        /* Tab System */
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-nav {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            overflow: hidden;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-right: 1px solid var(--border-color);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+        .tab-btn:last-child {
+            border-right: none;
+        }
+        .tab-btn.active {
+            background: var(--card-background);
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        .tab-btn:not(.active):hover {
+            background: #e9ecef;
+            color: var(--text-primary);
+        }
+        .tab-content {
+            display: none;
+            background: var(--card-background);
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            flex-direction: column;
+            gap: 12px;
+        }
+        .tab-content.active {
+            display: flex;
+        }
+        .settings-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .tab-content label { font-weight: 600; font-size: 14px; display: block; }
+
+        /* Form Controls */
+        input[type="text"], input[type="password"], select {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid var(--border-color); border-radius: var(--border-radius);
+            font-size: 14px; background: #fff;
+            transition: var(--transition); outline: none;
+        }
+
+        /* Select dropdown options */
+        select option {
+            padding: 8px 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        button {
+            border: none; border-radius: var(--border-radius);
+            padding: 10px 14px;
+            font-weight: 600; font-size: 14px; cursor: pointer;
+            transition: var(--transition); display: flex;
+            align-items: center; justify-content: center; gap: 8px;
+        }
+
+        /* Button Variants */
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #545b62; transform: translateY(-1px); }
+        .btn-danger { background: var(--danger-color); color: white; }
+        .btn-danger:hover { background: var(--danger-hover); transform: translateY(-1px); }
+        .btn-danger-outline { background: transparent; color: var(--danger-color); border: 1px solid var(--danger-color); }
+        .btn-danger-outline:hover { background: var(--danger-color); color: white; transform: translateY(-1px); }
+        .btn-success { background: var(--success-color); color: white; }
+        .btn-success:hover { background: var(--success-hover); transform: translateY(-1px); }
+        .btn-success:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; }
+        .btn-full-width { width: 100%; }
+        
+        /* Log Controls */
+        .log-controls {
+            display: flex;
+            gap: 8px;
+        }
+        .log-controls button {
+            flex: 1;
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        /* Folder Management Rows */
+        .folder-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .folder-row input, .folder-row select {
+            flex-grow: 1;
+        }
+        .folder-row label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        /* Expandable Section */
+        .expandable-section {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin: 0;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .expandable-section:first-of-type {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .expandable-section + .expandable-section {
+            border-top: none;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        .expandable-header {
+            background: var(--primary-light);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            user-select: none;
+        }
+        .expandable-header:hover {
+            background: #d4e8ff;
+        }
+        .expandable-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+        .expandable-indicators {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .content-indicator {
+            font-size: 8px;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .content-indicator.has-content {
+            color: var(--primary-color);
+        }
+        .expand-arrow {
+            font-size: 12px;
+            color: var(--primary-color);
+            transition: transform 0.2s ease-in-out;
+        }
+        .expandable-section.expanded .expand-arrow {
+            transform: rotate(180deg);
+        }
+        .expandable-content {
+            padding: 12px;
+            background: white;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .expandable-section.expanded .expandable-content {
+            display: flex;
+        }
+        .expandable-content textarea {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 10px;
+            font-size: 13px;
+            font-family: var(--font-family);
+            resize: vertical;
+            min-height: 80px;
+            transition: var(--transition);
+        }
+        .expandable-content textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+        .expandable-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .expandable-actions button {
+            flex: 1;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .model-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .model-selection label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .model-selection select {
+            font-size: 12px;
+            padding: 6px 8px;
+        }
+
+        /* Companies Section */
+        .companies-section { display: flex; flex-direction: column; gap: 8px; }
+        #company-list {
+            max-height: 220px;
+            overflow-y: auto; background: var(--card-background);
+            border: 1px solid var(--border-color); border-radius: var(--border-radius);
+            padding: 6px;
+        }
+        .company-card {
+            padding: 8px;
+            display: flex; align-items: center; gap: 12px;
+            border-radius: 8px; margin-bottom: 4px;
+        }
+        .company-card:hover { background: var(--primary-light); }
+        .company-card:last-child { margin-bottom: 0; }
+        .company-card .company-logo-link { flex-shrink: 0; }
+        .company-card .company-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color); transition: var(--transition); }
+        .company-card .company-logo:hover { opacity: 0.8; transform: scale(1.05); border-color: var(--primary-color); }
+        .company-info { flex-grow: 1; min-width: 0; line-height: 1.3; }
+        .company-info .name { font-weight: 600; font-size: 14px; color: var(--primary-color); }
+        .company-info .industry, .company-info .employees, .company-info .revenue { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        
+        /* AI Tags */
+        .ai-tags {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        .ai-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .ai-tag.b2b { background: #e3f2fd; color: #1976d2; }
+        .ai-tag.b2c { background: #f3e5f5; color: #7b1fa2; }
+        .ai-tag.both { background: #fff3e0; color: #f57c00; }
+        .ai-tag.similarity { background: #e8f5e8; color: #388e3c; }
+        .ai-tag.similarity.high { background: #c8e6c9; color: #2e7d32; }
+        .ai-tag.similarity.medium { background: #fff9c4; color: #f9a825; }
+        .ai-tag.similarity.low { background: #ffcdd2; color: #d32f2f; }
+        
+        /* Inline AI Tags (in revenue line) */
+        .ai-tags-inline {
+            margin-left: 8px;
+        }
+        .ai-tags-inline .ai-tag {
+            margin-right: 4px;
+        }
+        
+        .delete-company {
+            background: #f1f1f1; color: var(--text-secondary); border-radius: 50%;
+            width: 30px; height: 30px; font-size: 14px;
+            padding: 0; min-width: 30px; flex-shrink: 0;
+            font-weight: bold;
+        }
+        .delete-company:hover { background: var(--danger-color); color: white; transform: scale(1.1); }
+
+        /* Section Divider */
+        hr { border: none; height: 1px; background-color: var(--border-color); margin: 0; }
+
+        /* Contacts Section */
+        .contacts-section { display: flex; flex-direction: column; gap: 8px; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .header h2 { font-size: 16px; font-weight: 600; }
+        #contact-count {
+            background: var(--primary-color); color: white;
+            padding: 3px 9px;
+            border-radius: 16px;
+            font-size: 12px; font-weight: 600;
+        }
+
+        #contact-list {
+            max-height: 220px;
+            overflow-y: auto; background: var(--card-background);
+            border: 1px solid var(--border-color); border-radius: var(--border-radius);
+            padding: 6px;
+        }
+        .contact-card {
+            padding: 8px;
+            display: flex; align-items: center; gap: 12px;
+            border-radius: 8px; margin-bottom: 4px;
+        }
+        .contact-card:hover { background: var(--primary-light); }
+        .contact-card:last-child { margin-bottom: 0; }
+        .contact-card img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .contact-info { flex-grow: 1; min-width: 0; line-height: 1.3; }
+        .contact-info .name a { font-weight: 600; font-size: 14px; color: var(--primary-color); text-decoration: none; }
+        .contact-info .headline, .contact-info .company, .contact-info .location { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .contact-info .orbis-name { font-size: 12px; color: #666; font-style: italic; }
+
+        .delete-contact {
+            background: #f1f1f1; color: var(--text-secondary); border-radius: 50%;
+            width: 30px; height: 30px; font-size: 14px;
+            padding: 0; min-width: 30px; flex-shrink: 0;
+            font-weight: bold;
+        }
+        .delete-contact:hover { background: var(--danger-color); color: white; transform: scale(1.1); }
+
+        /* Export Options */
+        .export-options {
+            background: #f8f9fa; padding: 12px;
+            border: 1px solid var(--border-color); border-radius: var(--border-radius);
+        }
+        .checkbox-container { display: flex; align-items: center; margin-bottom: 8px; padding: 4px; }
+        .checkbox-container:hover { background: #f1f1f1; border-radius: 4px; }
+        .checkbox-container:last-of-type { margin-bottom: 0; }
+        .checkbox-container input[type="checkbox"] { width: 16px; height: 16px; margin-right: 12px; accent-color: var(--success-color); cursor: pointer; flex-shrink: 0; }
+        .checkbox-container label { font-size: 14px; cursor: pointer; font-weight: 500; }
+
+        /* API Usage Stats */
+        .api-usage-stats {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 10px;
+        }
+        .usage-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .usage-item:last-of-type { margin-bottom: 8px; }
+        .usage-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .usage-count {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-family: monospace;
+        }
+        .usage-reset {
+            text-align: center;
+            padding-top: 6px;
+            border-top: 1px solid var(--border-color);
+        }
+        .usage-reset small {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        /* Memory Indicator */
+        .memory-indicator {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 12px;
+        }
+        .memory-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .memory-fill {
+            height: 100%;
+            transition: all 0.3s ease-in-out;
+            border-radius: 5px;
+            position: relative;
+        }
+        .memory-fill.safe { background: linear-gradient(90deg, #28a745, #20c997); }
+        .memory-fill.warning { background: linear-gradient(90deg, #ffc107, #fd7e14); }
+        .memory-fill.danger { background: linear-gradient(90deg, #dc3545, #e74c3c); }
+        .memory-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .memory-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: monospace;
+        }
+        .memory-contacts {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .memory-legend {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .legend-color.safe { background: #28a745; }
+        .legend-color.warning { background: #ffc107; }
+        .legend-color.danger { background: #dc3545; }
+        .legend-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* Notification & Empty State */
+        #notification { padding: 10px; border-radius: var(--border-radius); font-weight: 500; font-size: 14px; margin-bottom: 8px; }
+        .notification-success { background: var(--success-light); color: var(--success-color); }
+        .notification-error { background: var(--danger-light); color: var(--danger-color); }
+        .empty-state, .contact-list-message { padding: 20px; text-align: center; color: var(--text-muted); font-style: italic; }
+        .processing::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: processing-animation 1.5s infinite;
+        }
+        @keyframes processing-animation {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        button.processing { position: relative; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <div id="popup-content">
+        <div class="popup-content-inner">
+            <div class="tab-container">
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="contatti">
+                    <span data-i18n="contactsTitle">Contatti</span>
+                </button>
+                <button class="tab-btn" data-tab="aziende">
+                    <span data-i18n="companiesTitle">Aziende</span>
+                </button>
+                <button class="tab-btn" data-tab="settings">
+                    <span data-i18n="settingsTitle">Impostazioni</span>
+                </button>
+            </div>
+            
+            <div id="contatti-tab" class="tab-content active">
+                <div id="notification" style="display: none;"></div>
+                
+                <div class="folder-row">
+                    <input type="text" id="folder-name" data-i18n-placeholder="newFolderPlaceholder">
+                    <button id="create-folder" class="btn-primary" data-i18n="create">Crea</button>
+                </div>
+                <div class="folder-row">
+                    <select id="folder-select">
+                        <!-- Populated by JS -->
+                    </select>
+                    <button id="delete-folder" class="btn-danger" data-i18n="delete">Elimina</button>
+                </div>
+                
+                <hr>
+                
+                <div class="contacts-section">
+                    <div class="header">
+                        <h2 data-i18n="savedContacts">Contatti Salvati</h2>
+                        <span id="contact-count">0</span>
+                    </div>
+                    <div id="contact-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="export-options">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="find-domains-checkbox">
+                        <label for="find-domains-checkbox" data-i18n="findDomainsLabel">Trova domini delle aziende</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="split-names-checkbox">
+                        <label for="split-names-checkbox" data-i18n="splitNamesLabel">Suddividi nomi e cognomi (con titolo)</label>
+                    </div>
+                    <button id="download-excel" class="btn-success btn-full-width" style="display: none; margin-top: 10px;" data-i18n="exportToExcel">Esporta in Excel</button>
+                </div>
+            </div>
+            
+            <div id="aziende-tab" class="tab-content">
+                <div id="notification-aziende" style="display: none;"></div>
+                
+                <!-- Expandable Folder Management Section -->
+                <div class="expandable-section" id="folder-management-expandable">
+                    <div class="expandable-header" id="folder-management-toggle">
+                        <span class="expandable-title" data-i18n="folderManagementLabel">Gestione Cartelle</span>
+                        <div class="expandable-indicators">
+                            <span class="content-indicator" id="folder-content-indicator">●</span>
+                            <span class="expand-arrow">▼</span>
+                        </div>
+                    </div>
+                    <div class="expandable-content" id="folder-management-content">
+                        <div class="folder-row">
+                            <input type="text" id="company-folder-name" data-i18n-placeholder="newCompanyFolderPlaceholder" placeholder="Nome nuova cartella aziende...">
+                            <button id="create-company-folder" class="btn-primary" data-i18n="create">Crea</button>
+                        </div>
+                        <div class="folder-row">
+                            <select id="company-folder-select">
+                                <!-- Populated by JS -->
+                            </select>
+                            <button id="delete-company-folder" class="btn-danger" data-i18n="delete">Elimina</button>
+                        </div>
+                        <div class="folder-row">
+                            <label for="linked-contact-folder" data-i18n="linkContactFolderLabel">Collega a cartella contatti:</label>
+                            <select id="linked-contact-folder">
+                                <option value="" data-i18n="selectContactFolder">Seleziona cartella contatti...</option>
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Expandable Target Companies Section -->
+                <div class="expandable-section" id="target-companies-expandable">
+                    <div class="expandable-header" id="target-companies-toggle">
+                        <span class="expandable-title" data-i18n="targetCompaniesLabel">Aziende Target</span>
+                        <div class="expandable-indicators">
+                            <span class="content-indicator" id="target-content-indicator">●</span>
+                            <span class="expand-arrow">▼</span>
+                        </div>
+                    </div>
+                    <div class="expandable-content" id="target-companies-content">
+                        <div class="model-selection">
+                            <label for="ai-model-select" data-i18n="aiModelLabel">Modello AI per Aziende:</label>
+                            <select id="ai-model-select">
+                                <option value="gemini-2.5-flash">Gemini 2.5 Flash (10 RPM, 250 RPD)</option>
+                                <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite (15 RPM, 1000 RPD)</option>
+                                <option value="gemini-2.5-pro">Gemini 2.5 Pro (5 RPM, 100 RPD)</option>  
+                            </select>
+                        </div>
+                        <textarea id="target-companies-text" placeholder="Inserisci informazioni sulle aziende target (settori, dimensioni, criteri specifici, ecc.)..." rows="4"></textarea>
+                        <div class="expandable-actions">
+                            <button id="save-target-companies" class="btn-primary" data-i18n="save">Salva</button>
+                            <button id="clear-target-companies" class="btn-secondary" data-i18n="clear">Pulisci</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="companies-section">
+                    <div class="header">
+                        <h2 data-i18n="savedCompanies">Aziende Salvate</h2>
+                        <span id="company-count">0</span>
+                    </div>
+                    <div id="company-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="export-options">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="enable-company-search-extraction">
+                        <label for="enable-company-search-extraction" data-i18n="enableCompanySearchExtraction">Estrai dati dalle pagine di ricerca aziende</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="enable-b2b-b2c-classification">
+                        <label for="enable-b2b-b2c-classification" data-i18n="enableB2BB2CClassification">Classificazione B2B/B2C</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="enable-similar-companies">
+                        <label for="enable-similar-companies" data-i18n="enableSimilarCompanies">Aziende simili</label>
+                    </div>
+                    <button id="download-companies-excel" class="btn-success btn-full-width" style="display: none; margin-top: 10px;" data-i18n="exportCompaniesToExcel">Esporta Aziende in Excel</button>
+                </div>
+            </div>
+            
+            <div id="settings-tab" class="tab-content">
+                <div class="settings-row">
+                    <label for="language-select" data-i18n="languageLabel">Lingua</label>
+                    <select id="language-select">
+                        <option value="it">Italiano</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="settings-row">
+                    <label for="gemini-model-select" data-i18n="modelLabel">Modello Gemini</label>
+                    <select id="gemini-model-select">
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (veloce, economico)</option>
+                        <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite (più veloce)</option>
+                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (più potente)</option>
+                    </select>
+                </div>
+                <div class="settings-row">
+                    <label for="gemini-api-key" data-i18n="apiKeyLabel">Chiave API Gemini</label>
+                    <input type="password" id="gemini-api-key" data-i18n-placeholder="apiKeyPlaceholder">
+                </div>
+                <div class="settings-row">
+                    <div class="api-usage-stats">
+                        <div class="usage-item">
+                            <span class="usage-label" data-i18n="flashUsageLabel">Flash (oggi):</span>
+                            <span class="usage-count" id="flash-usage-count">0/250</span>
+                        </div>
+                        <div class="usage-item">
+                            <span class="usage-label" data-i18n="flashLiteUsageLabel">Flash Lite (oggi):</span>
+                            <span class="usage-count" id="flash-lite-usage-count">0/1000</span>
+                        </div>
+                        <div class="usage-item">
+                            <span class="usage-label" data-i18n="proUsageLabel">Pro (oggi):</span>
+                            <span class="usage-count" id="pro-usage-count">0/100</span>
+                        </div>
+                        <div class="usage-reset">
+                            <small data-i18n="usageResetInfo">Reset alle 00:00 UTC</small>
+                        </div>
+                    </div>
+                </div>
+                <button id="save-api-key-btn" class="btn-primary btn-full-width" data-i18n="saveKeyBtn">Salva Chiave</button>
+                
+                <div class="settings-row">
+                    <label data-i18n="memoryUsageLabel">Utilizzo Memoria</label>
+                    <div class="memory-indicator">
+                        <div class="memory-bar">
+                            <div class="memory-fill" id="memory-fill"></div>
+                        </div>
+                        <div class="memory-info">
+                            <span class="memory-text" id="memory-text">0 KB / 10 MB</span>
+                            <span class="memory-contacts" id="memory-contacts">0 contatti</span>
+                        </div>
+                        <div class="memory-legend">
+                            <div class="legend-item">
+                                <span class="legend-color safe"></span>
+                                <span class="legend-text" data-i18n="memorySafe">Sicuro</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color warning"></span>
+                                <span class="legend-text" data-i18n="memoryWarning">Attenzione</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color danger"></span>
+                                <span class="legend-text" data-i18n="memoryDanger">Rischio</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-row">
+                    <div class="log-controls">
+                        <button id="export-logs-btn" class="btn-secondary" data-i18n="exportLogsBtn">📝 Esporta Log</button>
+                        <button id="clear-logs-btn" class="btn-danger-outline" data-i18n="clearLogsBtn">🗑️ Pulisci Log</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
