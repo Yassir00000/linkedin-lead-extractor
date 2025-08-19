@@ -34,17 +34,17 @@ I built this solution to solve both problems at once - eliminate the recurring c
 <div>
 
 ### Contact Management Interface
-<img src="images/2.jpeg" alt="Contact Management" width="600">
+<img src="images/2.jpeg" alt="Contact Management" width="300">
 
 *Organized lead extraction with folder management and real-time progress tracking*
 
 ### Company Intelligence Dashboard  
-<img src="images/3.jpeg" alt="Company Analysis" width="600">
+<img src="images/3.jpeg" alt="Company Analysis" width="300">
 
 *AI-powered company classification and data enrichment in action*
 
 ### Settings & Configuration
-<img src="images/4.jpeg" alt="Settings Panel" width="600">
+<img src="images/4.jpeg" alt="Settings Panel" width="300">
 
 *Simple configuration with AI model selection and usage monitoring*
 
@@ -62,6 +62,7 @@ I built this solution to solve both problems at once - eliminate the recurring c
 - [AI Integration](#ai-integration)
 - [Technical Details](#technical-details)
 - [Troubleshooting](#troubleshooting)
+- [Future Enhancements](#future-enhancements)
 
 ---
 
@@ -242,6 +243,31 @@ Chrome-extention/
 MIT License - see [LICENSE](LICENSE) file for details.
 
 **Note:** This extension is independent software and not affiliated with LinkedIn Corporation. Users must comply with LinkedIn's Terms of Service.
+
+---
+
+## Future Enhancements
+
+### Planned Integrations
+- **Database connectivity** - Direct export to MySQL, PostgreSQL for centralized lead management
+- **Google Drive sync** - Automatic backup and sharing of Excel reports with team members
+- **Cloud storage** - Seamless integration with Google Sheets for real-time collaboration
+
+### Automation Improvements
+- **Scheduled scraping** - Set up automated extraction jobs to run at specified intervals
+- **Bulk company processing** - Upload company lists and automatically extract all employees
+- **Background processing** - Queue management for large-scale data extraction operations
+
+### Email & Contact Enhancement
+- **Apollo.io integration** - Automatic email discovery for extracted LinkedIn profiles  
+- **Hunter.io compatibility** - Verify and enrich contact data with verified email addresses
+- **ZoomInfo connector** - Cross-reference LinkedIn data with comprehensive business databases
+- **Email validation** - Built-in email verification to ensure deliverability
+
+### Advanced Features
+- **CRM direct sync** - One-click export to Salesforce, HubSpot, Pipedrive
+- **Lead scoring** - AI-powered qualification based on company size, industry, role seniority
+- **Duplicate management** - Smart merging of contacts across different extraction sessions
 
 ---
 
