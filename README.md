@@ -25,7 +25,27 @@ Working in sales automation, I saw our team spending hours on manual lead format
 
 I built this solution to solve both problems at once - eliminate the recurring cost and the time waste. The result? Our lead processing went from a tedious daily task to a simple one-click operation, saving both money and countless hours of manual work.
 
-**The goal was simple:** Create a tool that does in 2 minutes what used to take 15 minutes, with better quality results.
+**The goal was simple:** Build something that simplifies the job to its maximum core, eliminating all manual labor parts. Compared to before, the workload has been drastically reduced.
+
+---
+
+## Screenshots
+
+<div align="center">
+
+### Contact Management Interface
+![Contact Management](images/2.jpeg)
+*Organized lead extraction with folder management and real-time progress tracking*
+
+### Company Intelligence Dashboard  
+![Company Analysis](images/3.jpeg)
+*AI-powered company classification and data enrichment in action*
+
+### Settings & Configuration
+![Settings Panel](images/4.jpeg)
+*Simple configuration with AI model selection and usage monitoring*
+
+</div>
 
 ---
 
