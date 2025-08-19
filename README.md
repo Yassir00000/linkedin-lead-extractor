@@ -31,18 +31,21 @@ I built this solution to solve both problems at once - eliminate the recurring c
 
 ## Screenshots
 
-<div align="center">
+<div>
 
 ### Contact Management Interface
-![Contact Management](images/2.jpeg)
+<img src="images/2.jpeg" alt="Contact Management" width="600">
+
 *Organized lead extraction with folder management and real-time progress tracking*
 
 ### Company Intelligence Dashboard  
-![Company Analysis](images/3.jpeg)
+<img src="images/3.jpeg" alt="Company Analysis" width="600">
+
 *AI-powered company classification and data enrichment in action*
 
 ### Settings & Configuration
-![Settings Panel](images/4.jpeg)
+<img src="images/4.jpeg" alt="Settings Panel" width="600">
+
 *Simple configuration with AI model selection and usage monitoring*
 
 </div>
