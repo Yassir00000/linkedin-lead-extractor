@@ -248,26 +248,21 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Future Enhancements
 
-### Planned Integrations
-- **Database connectivity** - Direct export to MySQL, PostgreSQL for centralized lead management
-- **Google Drive sync** - Automatic backup and sharing of Excel reports with team members
-- **Cloud storage** - Seamless integration with Google Sheets for real-time collaboration
+### **Email Discovery Integration**
+- **Apollo.io/Hunter.io API** - Automatic email lookup for extracted LinkedIn profiles
+- **Email validation** - Verify deliverability before export
 
-### Automation Improvements
-- **Scheduled scraping** - Set up automated extraction jobs to run at specified intervals
-- **Bulk company processing** - Upload company lists and automatically extract all employees
-- **Background processing** - Queue management for large-scale data extraction operations
+### **CRM Integration**
+- **Direct Salesforce/HubSpot sync** - One-click export to major CRM platforms
+- **Custom field mapping** - Configure data fields for specific CRM requirements
 
-### Email & Contact Enhancement
-- **Apollo.io integration** - Automatic email discovery for extracted LinkedIn profiles  
-- **Hunter.io compatibility** - Verify and enrich contact data with verified email addresses
-- **ZoomInfo connector** - Cross-reference LinkedIn data with comprehensive business databases
-- **Email validation** - Built-in email verification to ensure deliverability
+### **Bulk Processing**
+- **Company list upload** - Process entire company databases automatically
+- **Scheduled extraction** - Set up automated daily/weekly lead generation
 
-### Advanced Features
-- **CRM direct sync** - One-click export to Salesforce, HubSpot, Pipedrive
-- **Lead scoring** - AI-powered qualification based on company size, industry, role seniority
-- **Duplicate management** - Smart merging of contacts across different extraction sessions
+### **Lead Intelligence**
+- **Duplicate detection** - Smart merging across extraction sessions
+- **Lead scoring** - Basic qualification based on role seniority and company size
 
 ---
 
